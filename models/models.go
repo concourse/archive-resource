@@ -5,7 +5,8 @@ type InRequest struct {
 }
 
 type Source struct {
-	URI string `json:"uri"`
+	URI          string `json:"uri"`
+	OnlyDownload bool   `json:"only_download"`
 }
 
 type InResponse struct{}

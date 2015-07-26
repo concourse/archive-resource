@@ -42,10 +42,16 @@ func main() {
 		sourceURL.User = nil
 	}
 
+	var command string
+	if request.Source.OnlyDownload {
+		command = "cd \"$2\" && curl -k -O -H \"$3\" \"$1\""
+	} else {
+		command = "curl -k -H \"$3\" \"$1\" | gunzip | tar -C \"$2\" -xf -"
+	}
 	curlPipe := exec.Command(
 		"sh",
 		"-c",
-		"curl -k -H \"$3\" \"$1\" | gunzip | tar -C \"$2\" -xf -",
+		command,
 		"sh", sourceURL.String(), destination, authHeader,
 	)
 
