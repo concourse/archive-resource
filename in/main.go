@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/concourse/archive-resource/curlopts"
 	"github.com/concourse/archive-resource/models"
 )
 
@@ -36,11 +37,16 @@ func main() {
 	}
 
 	authHeader := "Authorization: " + request.Source.Authorization
+	curlOpts, err := curlopts.NewCurlOpts(request.Source)
+	if err != nil {
+		fatal("generating curl opts", err)
+	}
+	defer curlOpts.Cleanup()
 
 	curlPipe := exec.Command(
 		"sh",
 		"-c",
-		"curl --location-trusted -k -H \"$3\" \"$1\" | tar --warning=no-unknown-keyword -C \"$2\" -zxf -",
+		"curl --location-trusted "+curlOpts.String()+" -H \"$3\" \"$1\" | tar --warning=no-unknown-keyword -C \"$2\" -zxf -",
 		"sh", sourceURL.String(), destination, authHeader,
 	)
 

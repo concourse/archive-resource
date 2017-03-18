@@ -15,6 +15,7 @@ type OutParams struct {
 
 type Source struct {
 	URI           string `json:"uri"`
+	CaCert        string `json:"ca_cert"`
 	Authorization string `json:"authorization"`
 }
 

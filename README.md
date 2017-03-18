@@ -13,6 +13,7 @@ resource](https://github.com/concourse/github-release-resource) instead.
 ## Source Configuration
 
 * `uri`: *Required.* The location of the file to download.
+* `ca_cert`: *Optional.* The contents of server CA cert.
 
 ## Behavior
 

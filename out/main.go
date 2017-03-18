@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/concourse/archive-resource/curlopts"
 	"github.com/concourse/archive-resource/models"
 )
 
@@ -32,12 +33,17 @@ func main() {
 	}
 
 	authHeader := "Authorization: " + request.Source.Authorization
+	curlOpts, err := curlopts.NewCurlOpts(request.Source)
+	if err != nil {
+		fatal("generating curl opts", err)
+	}
+	defer curlOpts.Cleanup()
 
 	directory := request.Params.Directory
 	curlPipe := exec.Command(
 		"sh",
 		"-c",
-		`tar --owner=0 --group=0 -C "$1" -czf - . | curl -H "$3" -X PUT "$2" -T -`,
+		`tar --owner=0 --group=0 -C "$1" -czf - . | curl `+curlOpts.String()+` -H "$3" -X PUT "$2" -T -`,
 		"sh",
 		filepath.Join(sourceDirectory, directory),
 		sourceURL.String(),
