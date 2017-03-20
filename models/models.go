@@ -14,9 +14,10 @@ type OutParams struct {
 }
 
 type Source struct {
-	URI           string `json:"uri"`
-	CaCert        string `json:"ca_cert"`
-	Authorization string `json:"authorization"`
+	URI              string `json:"uri"`
+	CaCert           string `json:"ca_cert"`
+	Authorization    string `json:"authorization"`
+	SkipSslVaidation bool   `json:"skip_ssl_validation"`
 }
 
 type InResponse struct{}

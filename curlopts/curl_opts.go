@@ -8,15 +8,20 @@ import (
 )
 
 type CurlOpts struct {
-	path string
+	path              string
+	skipSslValidation bool
 }
 
 func (opts CurlOpts) String() string {
-	if opts.path == "" {
-		return ""
+	if opts.path != "" {
+		return "--cacert " + opts.path
 	}
 
-	return "--cacert " + opts.path
+	if opts.skipSslValidation {
+		return "-k"
+	}
+
+	return ""
 }
 
 func (opts CurlOpts) Cleanup() error {
@@ -28,19 +33,22 @@ func (opts CurlOpts) Cleanup() error {
 }
 
 func NewCurlOpts(source models.Source) (CurlOpts, error) {
+	opts := CurlOpts{skipSslValidation: source.SkipSslVaidation}
+
 	if source.CaCert == "" {
-		return CurlOpts{}, nil
+		return opts, nil
 	}
 
 	caCertPath, err := ioutil.TempFile("", "archive-resource-cert")
 	if err != nil {
-		return CurlOpts{}, err
+		return opts, err
 	}
 
 	_, err = caCertPath.WriteString(source.CaCert)
 	if err != nil {
-		return CurlOpts{}, err
+		return opts, err
 	}
 
-	return CurlOpts{path: caCertPath.Name()}, nil
+	opts.path = caCertPath.Name()
+	return opts, nil
 }

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e -x
+
+ROOT=$PWD
+
+export GOPATH=$PWD/gopath
+export PATH=$GOPATH/bin:$PATH
+
+cd $GOPATH/src/github.com/concourse/archive-resource
+
+go get github.com/onsi/ginkgo/ginkgo
+go get github.com/onsi/gomega
+
+ginkgo -r -p
